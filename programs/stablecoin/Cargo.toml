@@ -1,0 +1,25 @@
+[package]
+name = "stablecoin"
+version = "0.1.0"
+description = "Solana Stablecoin Program"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.30.1"
+anchor-spl = "0.30.1"
+solana-program = "~1.17.0"
+switchboard-v2 = "0.4.0"
+
+[dev-dependencies]
+solana-program-test = "~1.17.0"
+solana-sdk = "~1.17.0"
