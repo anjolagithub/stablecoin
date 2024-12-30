@@ -1,8 +1,6 @@
-// programs/stablecoin/src/lib.rs
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount};
 use switchboard_v2::{AggregatorAccountData, SwitchboardDecimal};
-use std::convert::TryFrom;
 
 declare_id!("22txojBd5nbZtHsvfCkCAzV9RQmFC3kT8ziK2ZPozKRP");
 
@@ -40,8 +38,7 @@ pub mod stablecoin {
             .map_err(|_| error!(StablecoinError::InvalidOracleData))?;
         
         // Convert Switchboard decimal to f64
-        let oracle_price = sb_decimal.try_into_f64()
-            .map_err(|_| error!(StablecoinError::InvalidOracleData))?;
+        let oracle_price = (sb_decimal.mantissa as f64) / 10f64.powi(sb_decimal.scale as i32);
         
         require!(oracle_price > 0.0, StablecoinError::InvalidOraclePrice);
         
@@ -171,7 +168,7 @@ pub struct MintTokens<'info> {
     
     #[account(
         constraint = 
-            oracle.load()?.latest_confirmed_round.is_some()
+            oracle.load()?.latest_confirmed_round.round_open_timestamp > 0
             @ StablecoinError::OracleNotInitialized
     )]
     pub oracle: AccountLoader<'info, AggregatorAccountData>,
